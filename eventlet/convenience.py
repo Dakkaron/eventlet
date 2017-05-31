@@ -55,7 +55,10 @@ def listen(addr, family=socket.AF_INET, backlog=50, reuse_addr=True, reuse_port=
         reuse_port = True
     if reuse_port and hasattr(socket, 'SO_REUSEPORT'):
         # NOTE(zhengwei): linux kernel >= 3.9
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        try:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        except (OSError, ValueError):
+            pass
     sock.bind(addr)
     sock.listen(backlog)
     return sock
